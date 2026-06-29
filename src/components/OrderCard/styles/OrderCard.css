@@ -1,0 +1,58 @@
+.OrderCard {
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,.08);
+
+    transition:
+        box-shadow .25s ease,
+        transform .25s ease;
+
+    user-select: none;
+
+}
+
+.OrderCard:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.12);
+
+}
+
+/*------------------------------------------------*/
+/* Estado expandido                               */
+/*------------------------------------------------*/
+
+.OrderCard.expanded {
+
+    box-shadow:
+        0 12px 26px rgba(0,0,0,.14);
+
+}
+
+/*------------------------------------------------*/
+/* Separación entre bloques                       */
+/*------------------------------------------------*/
+
+.OrderCard > * {
+
+    border-bottom: 1px solid #eeeeee;
+
+}
+
+.OrderCard > *:last-child {
+
+    border-bottom: none;
+
+}

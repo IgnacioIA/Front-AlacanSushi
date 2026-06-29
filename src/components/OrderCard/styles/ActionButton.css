@@ -1,0 +1,93 @@
+.ActionButton {
+
+    width: 100%;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: .85rem;
+
+    cursor: pointer;
+
+    font-size: .95rem;
+
+    font-weight: 600;
+
+    transition:
+
+        transform .15s ease,
+
+        opacity .15s ease,
+
+        background .20s ease;
+
+}
+
+.ActionButton:hover {
+
+    transform: translateY(-1px);
+
+}
+
+.ActionButton:active {
+
+    transform: scale(.98);
+
+}
+
+.ActionButton.success {
+
+    background: #3dbd6b;
+
+    color: white;
+
+}
+
+.ActionButton.success:hover {
+
+    background: #2ea85b;
+
+}
+
+.ActionButton.danger {
+
+    background: #e74c3c;
+
+    color: white;
+
+}
+
+.ActionButton.danger:hover {
+
+    background: #d63d2f;
+
+}
+
+.ActionButton.primary {
+
+    background: #ff7b00;
+
+    color: white;
+
+}
+
+.ActionButton.primary:hover {
+
+    background: #ea7000;
+
+}
+
+.ActionButton.secondary {
+
+    background: #ececec;
+
+    color: #333;
+
+}
+
+.ActionButton.secondary:hover {
+
+    background: #dfdfdf;
+
+}

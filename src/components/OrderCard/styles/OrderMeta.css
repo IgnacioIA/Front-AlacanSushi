@@ -1,0 +1,55 @@
+.OrderMeta {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: .75rem;
+
+    padding: 1rem;
+
+}
+
+.OrderMeta-Row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.OrderMeta-Label {
+
+    font-size: .9rem;
+
+    color: #555;
+
+}
+
+.OrderMeta-Value {
+
+    font-size: .9rem;
+
+    font-weight: 600;
+
+    color: #222;
+
+}
+
+.OrderMeta-Total {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding-top: .75rem;
+
+    border-top: 1px solid #ececec;
+
+    font-size: 1rem;
+
+}

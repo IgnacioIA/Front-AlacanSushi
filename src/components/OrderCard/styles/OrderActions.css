@@ -1,0 +1,11 @@
+.OrderActions {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: .75rem;
+
+    padding: 1rem;
+
+}

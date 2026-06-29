@@ -1,0 +1,69 @@
+.OrderDetails {
+
+    max-height: 0;
+
+    opacity: 0;
+
+    overflow: hidden;
+
+    transition:
+        max-height .35s ease,
+        opacity .25s ease;
+
+}
+
+.OrderDetails.expanded {
+
+    max-height: 500px;
+
+    opacity: 1;
+
+}
+
+.OrderDetails-Content {
+
+    padding: 1rem;
+
+}
+
+.OrderDetails-Item {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    margin-bottom: .75rem;
+
+}
+
+.OrderDetails-Item:last-child {
+
+    margin-bottom: 0;
+
+}
+
+.OrderDetails-Name {
+
+    flex: 1;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    color: #444;
+
+}
+
+.OrderDetails-Price {
+
+    flex-shrink: 0;
+
+    font-weight: 700;
+
+}
