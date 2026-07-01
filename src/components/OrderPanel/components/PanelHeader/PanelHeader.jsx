@@ -1,6 +1,6 @@
 import "./PanelHeader.css";
 
-export default function PanelHeader() {
+export default function PanelHeader({ onCreateOrder }) {
 
     return (
 
@@ -19,6 +19,14 @@ export default function PanelHeader() {
                 </span>
 
             </h1>
+
+            <button
+                type="button"
+                className="PanelHeader-CreateButton"
+                onClick={onCreateOrder}
+            >
+                + Nuevo pedido
+            </button>
 
         </header>
 

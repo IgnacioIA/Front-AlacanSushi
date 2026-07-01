@@ -1,0 +1,126 @@
+.OrderItemList-Empty {
+
+    margin: 0;
+
+    padding: 1rem;
+
+    text-align: center;
+
+    font-size: .85rem;
+    color: #999;
+
+    background: #f9f9f9;
+    border-radius: 8px;
+
+}
+
+.OrderItemList {
+
+    list-style: none;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: .5rem;
+
+}
+
+.OrderItemList-Row {
+
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+
+    align-items: center;
+
+    gap: .75rem;
+
+    padding: .5rem .75rem;
+
+    border-radius: 8px;
+    background: #f9f9f9;
+
+}
+
+.OrderItemList-Name {
+
+    font-size: .9rem;
+    font-weight: 500;
+
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+}
+
+.OrderItemList-Quantity {
+
+    display: flex;
+    align-items: center;
+
+    gap: .4rem;
+
+}
+
+.OrderItemList-Quantity button {
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 6px;
+    background: white;
+    border: 1px solid #e0e0e0;
+
+    font-size: 1rem;
+    line-height: 1;
+
+}
+
+.OrderItemList-Quantity button:hover {
+
+    background: #ececec;
+
+}
+
+.OrderItemList-Subtotal {
+
+    font-size: .85rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+.OrderItemList-Remove {
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 6px;
+
+    color: #e74c3c;
+
+    font-size: .9rem;
+
+}
+
+.OrderItemList-Remove:hover {
+
+    background: #fdecea;
+
+}
+
+@media (max-width: 480px) {
+
+    .OrderItemList-Row {
+
+        grid-template-columns: 1fr auto;
+        row-gap: .4rem;
+
+    }
+
+}

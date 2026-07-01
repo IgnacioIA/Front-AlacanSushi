@@ -37,22 +37,6 @@ const mockOrders = [
                 price: 4000
             }
 
-        ],
-
-        availableActions: [
-
-            {
-                id: "ACCEPT",
-                label: "Aceptar",
-                variant: "success"
-            },
-
-            {
-                id: "REJECT",
-                label: "Rechazar",
-                variant: "danger"
-            }
-
         ]
 
     },
@@ -89,22 +73,6 @@ const mockOrders = [
                 quantity: 1,
                 name: "Coca Cola 2.25L",
                 price: 4000
-            }
-
-        ],
-
-        availableActions: [
-
-            {
-                id: "ACCEPT",
-                label: "Aceptar",
-                variant: "success"
-            },
-
-            {
-                id: "REJECT",
-                label: "Rechazar",
-                variant: "danger"
             }
 
         ]

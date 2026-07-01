@@ -10,7 +10,9 @@
 
 .OrderHeader-Toggle {
 
-    width: 100%;
+    flex: 1;
+
+    min-width: 0;
 
     display: flex;
 
@@ -37,6 +39,48 @@
 }
 
 .OrderHeader-Toggle:focus-visible {
+
+    outline: 2px solid #ff7b00;
+
+    outline-offset: -2px;
+
+}
+
+.OrderHeader-Edit {
+
+    flex-shrink: 0;
+
+    width: 44px;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: none;
+
+    background: transparent;
+
+    color: #ff7b00;
+
+    font-size: 1.05rem;
+
+    cursor: pointer;
+
+    transition: background .20s ease;
+
+}
+
+.OrderHeader-Edit:hover {
+
+    background: #f8f8f8;
+
+}
+
+.OrderHeader-Edit:focus-visible {
 
     outline: 2px solid #ff7b00;
 

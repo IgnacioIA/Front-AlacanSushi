@@ -8,7 +8,11 @@ export default function OrderHeader({
 
     expanded,
 
-    onToggle
+    onToggle,
+
+    canEdit,
+
+    onEdit
 
 }) {
 
@@ -41,6 +45,21 @@ export default function OrderHeader({
                 </span>
 
             </button>
+
+            {canEdit && (
+
+                <button
+                    type="button"
+                    className="OrderHeader-Edit"
+                    onClick={onEdit}
+                    aria-label={`Editar ${title}`}
+                >
+
+                    ✎
+
+                </button>
+
+            )}
 
         </header>
 

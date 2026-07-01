@@ -16,7 +16,9 @@ export function mapOrderToCard(order) {
 
         items: order.items,
 
-        actions: order.availableActions
+        actions: order.availableActions,
+
+        canEdit: order.canEdit
 
     };
 

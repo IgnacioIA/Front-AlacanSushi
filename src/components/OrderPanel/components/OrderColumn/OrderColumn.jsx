@@ -8,7 +8,9 @@ export default function OrderColumn({
 
     orders,
 
-    onAction
+    onAction,
+
+    onEdit
 
 }) {
 
@@ -37,6 +39,8 @@ export default function OrderColumn({
                             order={order}
 
                             onAction={onAction}
+
+                            onEdit={onEdit}
 
                         />
 

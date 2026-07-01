@@ -1,0 +1,91 @@
+.OrderForm {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 1.25rem;
+
+}
+
+.OrderForm-Row {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 1rem;
+
+}
+
+.OrderForm-Field {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: .35rem;
+
+    font-size: .85rem;
+    font-weight: 600;
+    color: #555;
+
+}
+
+.OrderForm-Field select,
+.OrderForm-Field input {
+
+    min-height: 44px;
+
+    padding: 0 .75rem;
+
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+
+    font-size: .9rem;
+    font-weight: 400;
+    color: #111;
+
+    background: white;
+
+}
+
+.OrderForm-Field select:focus,
+.OrderForm-Field input:focus {
+
+    outline: 2px solid #ff7b00;
+    outline-offset: 1px;
+
+}
+
+.OrderForm-Total {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: .85rem 1rem;
+
+    border-radius: 8px;
+    background: #f5f5f5;
+
+    font-size: 1rem;
+    font-weight: 700;
+
+}
+
+.OrderForm-Footer {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 1rem;
+
+}
+
+@media (max-width: 480px) {
+
+    .OrderForm-Row {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}

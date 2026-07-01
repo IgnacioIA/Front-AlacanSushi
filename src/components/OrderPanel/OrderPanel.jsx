@@ -2,9 +2,12 @@ import "./OrderPanel.css";
 
 import PanelHeader from "./components/PanelHeader/PanelHeader";
 import OrderColumn from "./components/OrderColumn/OrderColumn";
+import OrderFormModal from "./components/OrderFormModal/OrderFormModal";
+import OrderForm from "./components/OrderForm/OrderForm";
 
 import useOrders from "./hooks/useOrders";
-import { PANEL_COLUMNS } from "./constants/panelColumns";
+import useOrderPanel from "./hooks/useOrderPanel";
+import { ORDER_COLUMNS } from "./constants/orderColumns";
 
 export default function OrderPanel() {
 
@@ -14,9 +17,29 @@ export default function OrderPanel() {
 
         columns,
 
-        dispatchOrderAction
+        dispatchOrderAction,
+
+        createOrder,
+
+        updateOrder
 
     } = useOrders();
+
+    const {
+
+        isModalOpen,
+
+        editingOrder,
+
+        formSessionId,
+
+        openCreateModal,
+
+        openEditModal,
+
+        closeModal
+
+    } = useOrderPanel();
 
     if (loading) {
 
@@ -32,15 +55,31 @@ export default function OrderPanel() {
 
     }
 
+    async function handleSubmit(orderData) {
+
+        if (editingOrder) {
+
+            await updateOrder(editingOrder.id, orderData);
+
+        } else {
+
+            await createOrder(orderData);
+
+        }
+
+        closeModal();
+
+    }
+
     return (
 
         <section className="OrderPanel">
 
-            <PanelHeader />
+            <PanelHeader onCreateOrder={openCreateModal} />
 
             <div className="OrderPanel-Columns">
 
-                {PANEL_COLUMNS.map(column => (
+                {ORDER_COLUMNS.map(column => (
 
                     <OrderColumn
 
@@ -52,11 +91,28 @@ export default function OrderPanel() {
 
                         onAction={dispatchOrderAction}
 
+                        onEdit={openEditModal}
+
                     />
 
                 ))}
 
             </div>
+
+            <OrderFormModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                title={editingOrder ? `Editar pedido #${editingOrder.id}` : "Nuevo pedido"}
+            >
+
+                <OrderForm
+                    key={formSessionId}
+                    initialData={editingOrder}
+                    onCancel={closeModal}
+                    onSubmit={handleSubmit}
+                />
+
+            </OrderFormModal>
 
         </section>
 

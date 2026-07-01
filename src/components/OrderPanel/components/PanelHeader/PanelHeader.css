@@ -4,7 +4,9 @@
 
     align-items: center;
 
-    justify-content: center;
+    justify-content: space-between;
+
+    gap: 1rem;
 
 }
 
@@ -27,5 +29,51 @@
 .PanelHeader-Orange {
 
     color: #ff7b00;
+
+}
+
+.PanelHeader-CreateButton {
+
+    min-height: 44px;
+
+    padding: 0 1.25rem;
+
+    border-radius: 8px;
+
+    background: #ff7b00;
+    color: white;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    transition: background .2s ease, transform .15s ease;
+
+}
+
+.PanelHeader-CreateButton:hover {
+
+    background: #ea7000;
+
+}
+
+.PanelHeader-CreateButton:active {
+
+    transform: scale(.98);
+
+}
+
+@media (max-width: 480px) {
+
+    .PanelHeader {
+
+        flex-wrap: wrap;
+
+    }
+
+    .PanelHeader h1 {
+
+        font-size: 1.5rem;
+
+    }
 
 }

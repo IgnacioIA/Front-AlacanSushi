@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { PANEL_COLUMNS } from "../constants/panelColumns";
+import { ORDER_COLUMNS } from "../constants/orderColumns";
 
 import orderService from "../services/orderService";
 
@@ -12,15 +12,29 @@ export default function useOrders() {
 
     const [loading, setLoading] = useState(true);
 
+    const [error, setError] = useState(null);
+
     useEffect(() => {
 
         async function loadOrders() {
 
-            const data = await orderService.getOrders();
+            try {
 
-            setOrders(data);
+                const data = await orderService.getOrders();
 
-            setLoading(false);
+                setOrders(data);
+
+                setError(null);
+
+            } catch {
+
+                setError("No se pudieron cargar los pedidos.");
+
+            } finally {
+
+                setLoading(false);
+
+            }
 
         }
 
@@ -36,7 +50,7 @@ export default function useOrders() {
 
         const grouped = {};
 
-        PANEL_COLUMNS.forEach(column => {
+        ORDER_COLUMNS.forEach(column => {
 
             grouped[column.id] = [];
 
@@ -58,13 +72,55 @@ export default function useOrders() {
 
     async function dispatchOrderAction(orderId, actionId) {
 
-        await orderService.dispatchOrderAction(
+        try {
 
-            orderId,
+            await orderService.dispatchOrderAction(
 
-            actionId
+                orderId,
 
-        );
+                actionId
+
+            );
+
+            setError(null);
+
+        } catch {
+
+            setError("No se pudo actualizar el pedido.");
+
+        }
+
+    }
+
+    async function createOrder(orderData) {
+
+        try {
+
+            await orderService.createOrder(orderData);
+
+            setError(null);
+
+        } catch {
+
+            setError("No se pudo crear el pedido.");
+
+        }
+
+    }
+
+    async function updateOrder(orderId, updates) {
+
+        try {
+
+            await orderService.updateOrder(orderId, updates);
+
+            setError(null);
+
+        } catch {
+
+            setError("No se pudo actualizar el pedido.");
+
+        }
 
     }
 
@@ -72,9 +128,15 @@ export default function useOrders() {
 
         loading,
 
+        error,
+
         columns,
 
-        dispatchOrderAction
+        dispatchOrderAction,
+
+        createOrder,
+
+        updateOrder
 
     };
 

@@ -1,7 +1,5 @@
 // src/components/OrderCard/OrderCard.jsx
 
-import { useState } from "react";
-
 import "./styles/OrderCard.css";
 
 import OrderHeader from "./ui/OrderHeader/OrderHeader";
@@ -15,7 +13,9 @@ export default function OrderCard({
 
     order,
 
-    onAction
+    onAction,
+
+    onEdit
 
 }) {
 
@@ -25,6 +25,14 @@ export default function OrderCard({
         if (!onAction) return;
 
         onAction(order.id, actionId);
+
+    }
+
+    function handleEdit() {
+
+        if (!onEdit) return;
+
+        onEdit(order);
 
     }
 
@@ -51,6 +59,10 @@ export default function OrderCard({
                 expanded={expanded}
 
                 onToggle={toggleExpanded}
+
+                canEdit={card.canEdit}
+
+                onEdit={handleEdit}
 
             />
             <OrderMeta

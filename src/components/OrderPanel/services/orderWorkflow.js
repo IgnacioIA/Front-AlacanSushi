@@ -20,7 +20,7 @@ export const ORDER_WORKFLOW = {
 
     PREPARING: {
 
-        READY: "READY"
+        MARK_READY: "READY"
 
     },
 

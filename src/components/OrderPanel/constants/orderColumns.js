@@ -1,6 +1,4 @@
-// src/components/OrderPanel/constants/panelColumns.js
-
-export const PANEL_COLUMNS = [
+export const ORDER_COLUMNS = [
 
     {
         id: "NEW_ORDER",
