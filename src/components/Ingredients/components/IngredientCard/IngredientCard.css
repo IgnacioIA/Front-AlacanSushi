@@ -1,0 +1,34 @@
+.IngredientCard {
+
+    gap: .85rem;
+
+}
+
+.IngredientCard-Header {
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .5rem;
+
+}
+
+.IngredientCard-Name {
+
+    margin: 0;
+
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.IngredientCard-Quantity {
+
+    margin: 0;
+
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}

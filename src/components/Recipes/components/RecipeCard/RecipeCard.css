@@ -1,0 +1,58 @@
+.RecipeCard {
+
+    gap: .5rem;
+
+    border-top: 3px solid var(--color-primary);
+
+}
+
+.RecipeCard-Header {
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .5rem;
+
+}
+
+.RecipeCard-Product {
+
+    margin: 0;
+
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--color-muted);
+
+    text-transform: uppercase;
+    letter-spacing: .03em;
+
+}
+
+.RecipeCard-Name {
+
+    margin: 0;
+
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--color-text);
+
+}
+
+.RecipeCard-IngredientsCount {
+
+    margin: .35rem 0 0;
+
+    font-size: .9rem;
+    color: var(--color-text);
+
+}
+
+.RecipeCard-UpdatedAt {
+
+    margin: 0;
+
+    font-size: .78rem;
+    color: var(--color-muted);
+
+}

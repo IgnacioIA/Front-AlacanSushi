@@ -1,0 +1,156 @@
+.RecipeForm {
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+
+}
+
+.RecipeForm-Field {
+
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--color-text);
+
+}
+
+.RecipeForm-Field input,
+.RecipeForm-Field select,
+.RecipeForm-Field textarea {
+
+    min-height: 44px;
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 0 .8rem;
+
+    border-radius: 8px;
+    border: 1px solid #e0e0e5;
+
+    font-size: .95rem;
+    font-weight: 400;
+    color: var(--color-text);
+
+    font-family: inherit;
+
+}
+
+.RecipeForm-Field textarea {
+
+    padding: .6rem .8rem;
+    min-height: unset;
+    resize: vertical;
+
+}
+
+.RecipeForm-Field input:focus,
+.RecipeForm-Field select:focus,
+.RecipeForm-Field textarea:focus {
+
+    outline: none;
+    border-color: var(--color-primary);
+
+}
+
+.RecipeForm-Field input.invalid,
+.RecipeForm-Field select.invalid {
+
+    border-color: #e0483e;
+
+}
+
+.RecipeForm-Error {
+
+    font-size: .78rem;
+    font-weight: 500;
+    color: #e0483e;
+
+}
+
+.RecipeForm-Ingredients {
+
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+
+    outline: none;
+
+}
+
+.RecipeForm-Footer {
+
+    display: flex;
+    justify-content: flex-end;
+    gap: .75rem;
+
+    margin-top: .5rem;
+
+}
+
+.RecipeForm-Cancel,
+.RecipeForm-Submit {
+
+    min-height: 44px;
+
+    padding: 0 1.25rem;
+
+    border-radius: 8px;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    transition: background .2s ease, transform .15s ease;
+
+}
+
+.RecipeForm-Cancel {
+
+    background: #f0f0f0;
+    color: #333;
+
+}
+
+.RecipeForm-Cancel:hover {
+
+    background: #e2e2e2;
+
+}
+
+.RecipeForm-Submit {
+
+    background: var(--color-primary);
+    color: white;
+
+}
+
+.RecipeForm-Submit:hover {
+
+    filter: brightness(.94);
+
+}
+
+.RecipeForm-Cancel:active,
+.RecipeForm-Submit:active {
+
+    transform: scale(.98);
+
+}
+
+@keyframes RecipeForm-shake {
+
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+
+}
+
+.RecipeForm.shake {
+
+    animation: RecipeForm-shake .4s ease;
+
+}

@@ -1,0 +1,64 @@
+.ProductCard {
+
+    gap: .85rem;
+
+}
+
+.ProductCard-Header {
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .5rem;
+
+}
+
+.ProductCard-Name {
+
+    margin: 0;
+
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.ProductCard-Quantity {
+
+    margin: 0;
+
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.ProductCard-ProduceButton {
+
+    min-height: 40px;
+
+    margin-top: .25rem;
+
+    border-radius: 8px;
+
+    background: var(--color-primary);
+    color: white;
+
+    font-size: .9rem;
+    font-weight: 700;
+
+    transition: filter .2s ease, transform .15s ease;
+
+}
+
+.ProductCard-ProduceButton:hover {
+
+    filter: brightness(.94);
+
+}
+
+.ProductCard-ProduceButton:active {
+
+    transform: scale(.98);
+
+}

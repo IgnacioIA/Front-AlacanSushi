@@ -1,5 +1,7 @@
-function Ingredientes() {
-  return <h1>Ingredientes funcionando</h1>
-}
+// src/pages/private/Ingredientes.jsx
 
-export default Ingredientes
+import IngredientsPage from "../../components/Ingredients/IngredientsPage"
+
+export default function Ingredientes() {
+  return <IngredientsPage />
+}

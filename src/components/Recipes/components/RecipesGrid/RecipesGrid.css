@@ -1,0 +1,27 @@
+.RecipesGrid {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+    gap: 1.25rem;
+
+}
+
+.RecipesGrid-Groups {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2rem;
+
+}
+
+.RecipesGrid-GroupTitle {
+
+    margin: 0 0 1rem;
+
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}

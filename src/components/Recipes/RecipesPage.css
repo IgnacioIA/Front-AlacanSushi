@@ -1,0 +1,12 @@
+.RecipesPage {
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    gap: 1.75rem;
+
+    box-sizing: border-box;
+
+}

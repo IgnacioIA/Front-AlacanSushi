@@ -1,0 +1,89 @@
+.IngredientsHeader {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    gap: 1rem;
+
+}
+
+.IngredientsHeader-Title {
+
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+
+}
+
+.IngredientsHeader h1 {
+
+    margin: 0;
+
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.IngredientsHeader-Stats {
+
+    display: flex;
+    gap: 1rem;
+
+}
+
+.IngredientsHeader-Stat {
+
+    font-size: .9rem;
+    color: var(--color-muted);
+
+}
+
+.IngredientsHeader-Stat-Low {
+
+    color: #c0392b;
+    font-weight: 600;
+
+}
+
+.IngredientsHeader-CreateButton {
+
+    min-height: 44px;
+
+    padding: 0 1.25rem;
+
+    border-radius: 8px;
+
+    background: var(--color-primary);
+    color: white;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    transition: background .2s ease, transform .15s ease;
+
+}
+
+.IngredientsHeader-CreateButton:hover {
+
+    filter: brightness(.94);
+
+}
+
+.IngredientsHeader-CreateButton:active {
+
+    transform: scale(.98);
+
+}
+
+@media (max-width: 480px) {
+
+    .IngredientsHeader h1 {
+
+        font-size: 1.5rem;
+
+    }
+
+}

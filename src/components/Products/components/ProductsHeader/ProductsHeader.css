@@ -1,0 +1,89 @@
+.ProductsHeader {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    gap: 1rem;
+
+}
+
+.ProductsHeader-Title {
+
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+
+}
+
+.ProductsHeader h1 {
+
+    margin: 0;
+
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.ProductsHeader-Stats {
+
+    display: flex;
+    gap: 1rem;
+
+}
+
+.ProductsHeader-Stat {
+
+    font-size: .9rem;
+    color: var(--color-muted);
+
+}
+
+.ProductsHeader-Stat-Low {
+
+    color: #c0392b;
+    font-weight: 600;
+
+}
+
+.ProductsHeader-CreateButton {
+
+    min-height: 44px;
+
+    padding: 0 1.25rem;
+
+    border-radius: 8px;
+
+    background: var(--color-primary);
+    color: white;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    transition: background .2s ease, transform .15s ease;
+
+}
+
+.ProductsHeader-CreateButton:hover {
+
+    filter: brightness(.94);
+
+}
+
+.ProductsHeader-CreateButton:active {
+
+    transform: scale(.98);
+
+}
+
+@media (max-width: 480px) {
+
+    .ProductsHeader h1 {
+
+        font-size: 1.5rem;
+
+    }
+
+}

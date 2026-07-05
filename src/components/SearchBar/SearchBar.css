@@ -1,0 +1,44 @@
+.SearchBar {
+
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+
+    min-height: 44px;
+
+    padding: 0 .9rem;
+
+    background: var(--color-surface);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+
+    flex: 1;
+    min-width: 200px;
+
+}
+
+.SearchBar-Icon {
+
+    color: var(--color-muted);
+    flex-shrink: 0;
+
+}
+
+.SearchBar input {
+
+    border: none;
+    outline: none;
+    background: transparent;
+
+    width: 100%;
+
+    font-size: .95rem;
+    color: var(--color-text);
+
+}
+
+.SearchBar input::placeholder {
+
+    color: var(--color-muted);
+
+}

@@ -1,0 +1,49 @@
+.IngredientsToolbar-Controls {
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem;
+
+}
+
+.IngredientsToolbar-Select {
+
+    min-height: 44px;
+
+    padding: 0 .75rem;
+
+    border-radius: 10px;
+
+    background: var(--color-surface);
+    box-shadow: var(--shadow);
+
+    font-size: .9rem;
+    color: var(--color-text);
+
+}
+
+.IngredientsToolbar-CreateButton {
+
+    min-height: 44px;
+
+    padding: 0 1.1rem;
+
+    border-radius: 8px;
+
+    background: var(--color-surface);
+    box-shadow: var(--shadow);
+    color: var(--color-text);
+
+    font-size: .9rem;
+    font-weight: 600;
+
+    transition: background .2s ease;
+
+}
+
+.IngredientsToolbar-CreateButton:hover {
+
+    background: #f0f0f0;
+
+}

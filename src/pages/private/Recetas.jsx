@@ -1,5 +1,7 @@
-function Recetas() {
-  return <h1>Recetas funcionando</h1>
-}
+// src/pages/private/Recetas.jsx
 
-export default Recetas
+import RecipesPage from "../../components/Recipes/RecipesPage"
+
+export default function Recetas() {
+  return <RecipesPage />
+}

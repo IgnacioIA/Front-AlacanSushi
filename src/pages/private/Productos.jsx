@@ -1,5 +1,7 @@
-function Productos() {
-  return <h1>Productos funcionando</h1>
-}
+// src/pages/private/Productos.jsx
 
-export default Productos
+import ProductsPage from "../../components/Products/ProductsPage"
+
+export default function Productos() {
+  return <ProductsPage />
+}

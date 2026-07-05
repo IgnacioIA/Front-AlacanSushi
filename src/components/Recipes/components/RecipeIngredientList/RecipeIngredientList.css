@@ -1,0 +1,130 @@
+.RecipeIngredientList-Empty {
+
+    margin: 0;
+
+    padding: 1rem;
+
+    text-align: center;
+
+    font-size: .85rem;
+    color: #999;
+
+    background: #f9f9f9;
+    border-radius: 8px;
+
+}
+
+.RecipeIngredientList {
+
+    list-style: none;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: .5rem;
+
+}
+
+.RecipeIngredientList-Row {
+
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+
+    align-items: center;
+
+    gap: .75rem;
+
+    padding: .5rem .75rem;
+
+    border-radius: 8px;
+    background: #f9f9f9;
+
+}
+
+.RecipeIngredientList-Name {
+
+    font-size: .9rem;
+    font-weight: 500;
+
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+}
+
+.RecipeIngredientList-Quantity {
+
+    display: flex;
+    align-items: center;
+
+    gap: .4rem;
+
+}
+
+.RecipeIngredientList-Quantity button {
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 6px;
+    background: white;
+    border: 1px solid #e0e0e0;
+
+    font-size: 1rem;
+    line-height: 1;
+
+}
+
+.RecipeIngredientList-Quantity button:hover {
+
+    background: #ececec;
+
+}
+
+.RecipeIngredientList-Row select {
+
+    min-height: 32px;
+
+    padding: 0 .4rem;
+
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+
+    font-size: .85rem;
+
+}
+
+.RecipeIngredientList-Remove {
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 6px;
+
+    color: #e74c3c;
+
+    font-size: .9rem;
+
+}
+
+.RecipeIngredientList-Remove:hover {
+
+    background: #fdecea;
+
+}
+
+@media (max-width: 560px) {
+
+    .RecipeIngredientList-Row {
+
+        grid-template-columns: 1fr auto;
+        row-gap: .4rem;
+
+    }
+
+}

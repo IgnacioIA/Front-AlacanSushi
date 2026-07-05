@@ -1,0 +1,74 @@
+.StockIndicator {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: .35rem;
+
+}
+
+.StockIndicator-Bar {
+
+    width: 100%;
+    height: 8px;
+
+    background: #ececf0;
+    border-radius: 999px;
+
+    overflow: hidden;
+
+}
+
+.StockIndicator-Fill {
+
+    height: 100%;
+
+    border-radius: 999px;
+
+    transition: width .25s ease;
+
+}
+
+.StockIndicator-HIGH .StockIndicator-Fill {
+
+    background: #34c759;
+
+}
+
+.StockIndicator-MEDIUM .StockIndicator-Fill {
+
+    background: #ffb020;
+
+}
+
+.StockIndicator-LOW .StockIndicator-Fill {
+
+    background: #e0483e;
+
+}
+
+.StockIndicator-Label {
+
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--color-muted);
+
+}
+
+.StockIndicator-HIGH .StockIndicator-Label {
+
+    color: #248a3d;
+
+}
+
+.StockIndicator-MEDIUM .StockIndicator-Label {
+
+    color: #b17600;
+
+}
+
+.StockIndicator-LOW .StockIndicator-Label {
+
+    color: #c0392b;
+
+}
