@@ -15,7 +15,7 @@ export default function IngredientGrid({
 
     onEdit,
 
-    onDelete
+    onDeactivate
 
 }) {
 
@@ -35,7 +35,7 @@ export default function IngredientGrid({
                     ingredient={ingredient}
                     onOpenDetails={onOpenDetails}
                     onEdit={onEdit}
-                    onDelete={onDelete}
+                    onDeactivate={onDeactivate}
                 />
 
             ))}

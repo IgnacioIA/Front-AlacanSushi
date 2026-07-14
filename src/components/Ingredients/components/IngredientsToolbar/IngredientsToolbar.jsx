@@ -1,11 +1,14 @@
 // src/components/Ingredients/components/IngredientsToolbar/IngredientsToolbar.jsx
 //
-// Compone Toolbar + SearchBar (compartidos). Filtro y orden quedan
-// funcionales pero simples: son un concern de presentación, no de negocio.
+// Compone Toolbar + SearchBar (compartidos). El filtro de stock itera
+// STOCK_LEVELS (propio del módulo, valores reales de `inventario` en la API)
+// y no Object.keys(STOCK_LEVEL_META): ese objeto es compartido con Productos
+// y también contiene HIGH/MEDIUM/LOW, que no aplican acá.
 
 import Toolbar from "../../../Toolbar/Toolbar";
 import SearchBar from "../../../SearchBar/SearchBar";
 import { STOCK_LEVEL_META } from "../../../StockIndicator/stockLevelMeta";
+import { STOCK_LEVELS } from "../../constants/stockLevels";
 import { SORT_OPTIONS } from "../../hooks/useIngredientFilters";
 
 import "./IngredientsToolbar.css";
@@ -47,7 +50,7 @@ export default function IngredientsToolbar({
                     aria-label="Filtrar por nivel de stock"
                 >
                     <option value="ALL">Todos los niveles</option>
-                    {Object.keys(STOCK_LEVEL_META).map(level => (
+                    {STOCK_LEVELS.map(level => (
                         <option key={level} value={level}>
                             {STOCK_LEVEL_META[level].label}
                         </option>

@@ -1,7 +1,12 @@
 // src/components/Ingredients/hooks/useIngredientForm.js
 //
-// Validaciones únicamente de formato/obligatoriedad. Las reglas de negocio
-// sobre stock (niveles, alertas) pertenecen a la API.
+// Validaciones únicamente de formato/obligatoriedad, reflejando qué campos
+// exige cada endpoint real (ver docs/frontend/integration/ingredients.md):
+// en el alta, "stock mínimo" y "stock inicial" son opcionales; en la
+// edición, "stock mínimo" es obligatorio y no existe ningún campo de stock
+// inicial (el backend no acepta modificar el stock actual al editar).
+// buildIngredientPayload() devuelve una forma intermedia (no un DTO): es
+// ingredientMapper.js quien la traduce a la request real de cada endpoint.
 
 import { useState } from "react";
 
@@ -11,9 +16,9 @@ function initialFieldsFrom(initialData) {
 
         name: initialData?.name ?? "",
 
-        unit: initialData?.unit ?? "",
+        unitId: initialData?.unitId != null ? String(initialData.unitId) : "",
 
-        quantity: initialData?.quantity != null ? String(initialData.quantity) : "",
+        quantity: "",
 
         minStock: initialData?.minStock != null ? String(initialData.minStock) : "",
 
@@ -23,31 +28,41 @@ function initialFieldsFrom(initialData) {
 
 }
 
-function validate(fields) {
+function validate(fields, isCreateMode) {
 
     const errors = {};
 
     if (!fields.name.trim()) errors.name = "El nombre es obligatorio.";
 
-    if (!fields.unit.trim()) errors.unit = "La unidad es obligatoria.";
+    if (!fields.unitId) errors.unitId = "Seleccioná una unidad.";
 
-    if (fields.quantity.trim() === "" || Number.isNaN(Number(fields.quantity))) {
+    if (isCreateMode) {
 
-        errors.quantity = "Ingresá una cantidad válida.";
+        // Stock inicial y stock mínimo son opcionales en el alta — sólo se
+        // validan si el usuario efectivamente escribió algo.
+        if (fields.quantity.trim() !== "" &&
+            (Number.isNaN(Number(fields.quantity)) || Number(fields.quantity) < 0)) {
 
-    } else if (Number(fields.quantity) < 0) {
+            errors.quantity = "Ingresá una cantidad válida.";
 
-        errors.quantity = "La cantidad no puede ser negativa.";
+        }
 
-    }
+        if (fields.minStock.trim() !== "" &&
+            (Number.isNaN(Number(fields.minStock)) || Number(fields.minStock) < 0)) {
 
-    if (fields.minStock.trim() === "" || Number.isNaN(Number(fields.minStock))) {
+            errors.minStock = "El stock mínimo no puede ser negativo.";
 
-        errors.minStock = "Ingresá un stock mínimo válido.";
+        }
 
-    } else if (Number(fields.minStock) < 0) {
+    } else {
 
-        errors.minStock = "El stock mínimo no puede ser negativo.";
+        // La edición sí exige stock mínimo (PUT /ingredients/{id} lo requiere).
+        if (fields.minStock.trim() === "" ||
+            Number.isNaN(Number(fields.minStock)) || Number(fields.minStock) < 0) {
+
+            errors.minStock = "Ingresá un stock mínimo válido.";
+
+        }
 
     }
 
@@ -56,6 +71,8 @@ function validate(fields) {
 }
 
 export default function useIngredientForm(initialData) {
+
+    const isCreateMode = !initialData;
 
     const [initialFields] = useState(() => initialFieldsFrom(initialData));
 
@@ -75,7 +92,7 @@ export default function useIngredientForm(initialData) {
 
     function validateForm() {
 
-        const nextErrors = validate(fields);
+        const nextErrors = validate(fields, isCreateMode);
 
         setErrors(nextErrors);
 
@@ -89,13 +106,13 @@ export default function useIngredientForm(initialData) {
 
             name: fields.name.trim(),
 
-            unit: fields.unit.trim(),
+            unitId: Number(fields.unitId),
 
-            quantity: Number(fields.quantity),
+            description: fields.description.trim(),
 
-            minStock: Number(fields.minStock),
+            minStock: fields.minStock.trim() === "" ? null : Number(fields.minStock),
 
-            description: fields.description.trim()
+            quantity: fields.quantity.trim() === "" ? null : Number(fields.quantity)
 
         };
 
@@ -108,6 +125,8 @@ export default function useIngredientForm(initialData) {
         setField,
 
         errors,
+
+        isCreateMode,
 
         isDirty,
 

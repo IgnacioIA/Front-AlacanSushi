@@ -72,3 +72,41 @@
     color: #c0392b;
 
 }
+
+/* Vocabulario real de la API para Ingredients — mismos colores que HIGH/MEDIUM/LOW */
+
+.StockIndicator-CON_STOCK .StockIndicator-Fill {
+
+    background: #34c759;
+
+}
+
+.StockIndicator-NECESITA_REPOSICION .StockIndicator-Fill {
+
+    background: #ffb020;
+
+}
+
+.StockIndicator-SIN_STOCK .StockIndicator-Fill {
+
+    background: #e0483e;
+
+}
+
+.StockIndicator-CON_STOCK .StockIndicator-Label {
+
+    color: #248a3d;
+
+}
+
+.StockIndicator-NECESITA_REPOSICION .StockIndicator-Label {
+
+    color: #b17600;
+
+}
+
+.StockIndicator-SIN_STOCK .StockIndicator-Label {
+
+    color: #c0392b;
+
+}

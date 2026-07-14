@@ -1,93 +1,72 @@
 // src/components/Ingredients/services/ingredientService.js
 //
-// Mock del catálogo de ingredientes. La lógica de stock (niveles, alertas,
-// recálculo) pertenece a la API; este servicio sólo simula persistencia en
-// memoria hasta que exista el endpoint real (ver .contracts/dto-catalog.md).
+// getIngredients (Etapa 1), createIngredient/updateIngredient (Etapa 3) y
+// deactivateIngredient (Etapa 4) consumen la API real — ver
+// docs/frontend/integration/ingredients.md. Con esto, el módulo terminó de
+// migrar por completo: ya no queda ningún mock ni estado en memoria acá.
 
-import mockIngredients from "../mocks/mockIngredients";
+import httpClient from "../../../services/httpClient";
+import { mapFormToCreateRequest, mapFormToUpdateRequest } from "../model/ingredientMapper";
 
-let ingredients = [...mockIngredients];
+// Traduce la clave interna de orden (ver hooks/useIngredientFilters.js) al
+// valor real que espera `sort` en GET /ingredients.
+const SORT_PARAM = {
 
-const subscribers = [];
+    NAME: "nombre,asc",
 
-function notifySubscribers() {
+    QUANTITY: "cantidadActual,desc"
 
-    subscribers.forEach(cb => cb([...ingredients]));
+};
 
-}
+async function getIngredients({ page = 0, size = 15, search, sort, inventario } = {}) {
 
-async function getIngredients() {
+    const { data } = await httpClient.get("/ingredients", {
 
-    return [...ingredients];
+        params: {
 
-}
+            page,
 
-async function createIngredient(data) {
+            size,
 
-    const newId = ingredients.length
-        ? Math.max(...ingredients.map(ingredient => ingredient.id)) + 1
-        : 1;
+            search: search || undefined,
 
-    const newIngredient = {
-        id: newId,
-        name: data.name,
-        quantity: data.quantity,
-        unit: data.unit,
-        minStock: data.minStock,
-        // Placeholder hasta que la API calcule el nivel real de stock.
-        stockLevel: "MEDIUM",
-        description: data.description
-    };
+            sort: SORT_PARAM[sort] ?? undefined,
 
-    ingredients = [...ingredients, newIngredient];
+            inventario: inventario || undefined
 
-    notifySubscribers();
-
-    return getIngredients();
-
-}
-
-async function updateIngredient(ingredientId, updates) {
-
-    ingredients = ingredients.map(ingredient => {
-
-        if (ingredient.id !== ingredientId) return ingredient;
-
-        return {
-            ...ingredient,
-            name: updates.name,
-            quantity: updates.quantity,
-            unit: updates.unit,
-            minStock: updates.minStock,
-            description: updates.description
-        };
+        }
 
     });
 
-    notifySubscribers();
-
-    return getIngredients();
+    return data;
 
 }
 
-async function deleteIngredient(ingredientId) {
+async function createIngredient(payload) {
 
-    ingredients = ingredients.filter(ingredient => ingredient.id !== ingredientId);
+    const { data } = await httpClient.post("/ingredients", mapFormToCreateRequest(payload));
 
-    notifySubscribers();
-
-    return getIngredients();
+    return data;
 
 }
 
-function subscribeIngredients(cb) {
+async function updateIngredient(ingredientId, payload) {
 
-    subscribers.push(cb);
+    const { data } = await httpClient.put(`/ingredients/${ingredientId}`, mapFormToUpdateRequest(payload));
 
-    return () => {
-        const i = subscribers.indexOf(cb);
-        if (i >= 0) subscribers.splice(i, 1);
-    };
+    return data;
+
+}
+
+// Baja lógica: nunca elimina físicamente. La respuesta trae, además del
+// ingrediente actualizado, cuántas recetas activas lo referencian — es
+// puramente informativo, nunca bloquea la operación (ver
+// docs/frontend/integration/ingredients.md).
+async function deactivateIngredient(ingredientId) {
+
+    const { data } = await httpClient.post(`/ingredients/${ingredientId}/desactivar`);
+
+    return data;
 
 }
 
@@ -95,6 +74,5 @@ export default {
     getIngredients,
     createIngredient,
     updateIngredient,
-    deleteIngredient,
-    subscribeIngredients
+    deactivateIngredient
 };

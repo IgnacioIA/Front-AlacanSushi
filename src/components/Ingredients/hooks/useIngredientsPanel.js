@@ -1,7 +1,7 @@
 // src/components/Ingredients/hooks/useIngredientsPanel.js
 //
 // Estado de UI de los tres flujos modales de la página: formulario
-// (alta/edición), detalle de sólo lectura y confirmación de borrado.
+// (alta/edición), detalle de sólo lectura y confirmación de desactivación.
 
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ export default function useIngredientsPanel() {
 
     const [viewingIngredient, setViewingIngredient] = useState(null);
 
-    const [deletingIngredient, setDeletingIngredient] = useState(null);
+    const [deactivatingIngredient, setDeactivatingIngredient] = useState(null);
 
     function openCreateForm() {
 
@@ -59,15 +59,15 @@ export default function useIngredientsPanel() {
 
     }
 
-    function openDeleteConfirm(ingredient) {
+    function openDeactivateConfirm(ingredient) {
 
-        setDeletingIngredient(ingredient);
+        setDeactivatingIngredient(ingredient);
 
     }
 
-    function closeDeleteConfirm() {
+    function closeDeactivateConfirm() {
 
-        setDeletingIngredient(null);
+        setDeactivatingIngredient(null);
 
     }
 
@@ -91,11 +91,11 @@ export default function useIngredientsPanel() {
 
         closeDetails,
 
-        deletingIngredient,
+        deactivatingIngredient,
 
-        openDeleteConfirm,
+        openDeactivateConfirm,
 
-        closeDeleteConfirm
+        closeDeactivateConfirm
 
     };
 

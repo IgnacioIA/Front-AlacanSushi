@@ -1,22 +1,28 @@
 // src/components/Ingredients/components/IngredientForm/IngredientForm.jsx
 //
 // Formulario compartido entre alta y edición de ingredientes, diferenciado
-// únicamente por `initialData` (mismo patrón que OrderForm). Las
-// validaciones son sólo de formato/obligatoriedad: las reglas de negocio
-// sobre stock pertenecen a la API.
+// por `initialData` (mismo patrón que OrderForm). La unidad sale de un
+// selector real (catálogo de Unidades de Medida — Etapa 2), ya no es texto
+// libre. "Stock inicial" sólo se muestra en el alta: el backend no lo
+// acepta al editar. `submitError` es el error normalizado (apiError.js) de
+// un intento fallido contra la API real — distinto de `errors`, que son
+// validaciones de formato locales.
 
 import { useRef, useState } from "react";
 
 import useIngredientForm from "../../hooks/useIngredientForm";
+import useMeasurementUnits from "../../hooks/useMeasurementUnits";
 import ConfirmDialog from "../../../ConfirmDialog/ConfirmDialog";
 
 import "./IngredientForm.css";
 
-const FIELD_ORDER = ["name", "unit", "quantity", "minStock", "description"];
+const FIELD_ORDER = ["name", "unitId", "quantity", "minStock"];
 
 export default function IngredientForm({
 
     initialData,
+
+    submitError,
 
     onCancel,
 
@@ -32,6 +38,8 @@ export default function IngredientForm({
 
         errors,
 
+        isCreateMode,
+
         isDirty,
 
         validateForm,
@@ -40,11 +48,21 @@ export default function IngredientForm({
 
     } = useIngredientForm(initialData);
 
+    const units = useMeasurementUnits();
+
     const [shake, setShake] = useState(false);
 
     const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
 
     const fieldRefs = useRef({});
+
+    const unitSubmitError = submitError?.code === "UNIDAD_MEDIDA_BLOQUEADA"
+        ? submitError.title
+        : null;
+
+    const genericSubmitError = submitError && !unitSubmitError
+        ? (submitError.detail || submitError.title)
+        : null;
 
     function handleSubmit(event) {
 
@@ -93,6 +111,10 @@ export default function IngredientForm({
                 noValidate
             >
 
+                {genericSubmitError && (
+                    <p className="IngredientForm-SubmitError">{genericSubmitError}</p>
+                )}
+
                 <label className="IngredientForm-Field">
 
                     <span>Nombre</span>
@@ -118,43 +140,31 @@ export default function IngredientForm({
 
                         <span>Unidad</span>
 
-                        <input
-                            ref={el => { fieldRefs.current.unit = el; }}
-                            type="text"
-                            value={fields.unit}
-                            onChange={event => setField("unit", event.target.value)}
-                            className={errors.unit ? "invalid" : ""}
-                            placeholder="Ej: kg, L, unidad"
-                        />
+                        <select
+                            ref={el => { fieldRefs.current.unitId = el; }}
+                            value={fields.unitId}
+                            onChange={event => setField("unitId", event.target.value)}
+                            className={(errors.unitId || unitSubmitError) ? "invalid" : ""}
+                        >
+                            <option value="" disabled>Seleccionar...</option>
+                            {units.map(unit => (
+                                <option key={unit.id} value={unit.id}>
+                                    {unit.nombre} ({unit.abreviatura})
+                                </option>
+                            ))}
+                        </select>
 
-                        {errors.unit && (
-                            <small className="IngredientForm-Error">{errors.unit}</small>
+                        {(errors.unitId || unitSubmitError) && (
+                            <small className="IngredientForm-Error">
+                                {errors.unitId || unitSubmitError}
+                            </small>
                         )}
 
                     </label>
 
                     <label className="IngredientForm-Field">
 
-                        <span>Stock inicial</span>
-
-                        <input
-                            ref={el => { fieldRefs.current.quantity = el; }}
-                            type="number"
-                            value={fields.quantity}
-                            onChange={event => setField("quantity", event.target.value)}
-                            className={errors.quantity ? "invalid" : ""}
-                            placeholder="0"
-                        />
-
-                        {errors.quantity && (
-                            <small className="IngredientForm-Error">{errors.quantity}</small>
-                        )}
-
-                    </label>
-
-                    <label className="IngredientForm-Field">
-
-                        <span>Stock mínimo</span>
+                        <span>Stock mínimo{isCreateMode ? " (opcional)" : ""}</span>
 
                         <input
                             ref={el => { fieldRefs.current.minStock = el; }}
@@ -171,6 +181,29 @@ export default function IngredientForm({
 
                     </label>
 
+                    {isCreateMode && (
+
+                        <label className="IngredientForm-Field">
+
+                            <span>Stock inicial (opcional)</span>
+
+                            <input
+                                ref={el => { fieldRefs.current.quantity = el; }}
+                                type="number"
+                                value={fields.quantity}
+                                onChange={event => setField("quantity", event.target.value)}
+                                className={errors.quantity ? "invalid" : ""}
+                                placeholder="0"
+                            />
+
+                            {errors.quantity && (
+                                <small className="IngredientForm-Error">{errors.quantity}</small>
+                            )}
+
+                        </label>
+
+                    )}
+
                 </div>
 
                 <label className="IngredientForm-Field">
@@ -178,7 +211,6 @@ export default function IngredientForm({
                     <span>Descripción (opcional)</span>
 
                     <textarea
-                        ref={el => { fieldRefs.current.description = el; }}
                         value={fields.description}
                         onChange={event => setField("description", event.target.value)}
                         placeholder="Notas adicionales sobre el ingrediente"

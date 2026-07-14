@@ -1,9 +1,14 @@
 // src/components/Ingredients/hooks/useIngredientFilters.js
 //
-// Búsqueda, filtro por nivel de stock y orden: concerns de presentación
-// sobre datos ya resueltos, sin recalcular ningún estado de dominio.
+// Antes filtraba/ordenaba en cliente sobre la lista completa ya cargada.
+// Desde la Etapa 1, búsqueda/filtro/orden/página son parámetros reales de
+// GET /ingredients (ver docs/frontend/integration/ingredients.md) — este
+// hook sólo posee el estado de UI; quien lo consume (useIngredients) los usa
+// para pedir la página correspondiente al servidor. Cambiar cualquier
+// criterio vuelve a la página 0 (evita quedar "perdido" en una página que
+// dejó de existir con el nuevo resultado).
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export const SORT_OPTIONS = {
 
@@ -13,7 +18,9 @@ export const SORT_OPTIONS = {
 
 };
 
-export default function useIngredientFilters(ingredients) {
+export const DEFAULT_PAGE_SIZE = 15;
+
+export default function useIngredientFilters() {
 
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -21,43 +28,51 @@ export default function useIngredientFilters(ingredients) {
 
     const [sortBy, setSortBy] = useState(SORT_OPTIONS.NAME);
 
-    const filteredIngredients = useMemo(() => {
+    const [page, setPage] = useState(0);
 
-        const term = searchTerm.trim().toLowerCase();
+    function updateSearchTerm(value) {
 
-        return ingredients
+        setSearchTerm(value);
 
-            .filter(ingredient =>
-                !term || ingredient.name.toLowerCase().includes(term))
+        setPage(0);
 
-            .filter(ingredient =>
-                stockFilter === "ALL" || ingredient.stockLevel === stockFilter)
+    }
 
-            .sort((a, b) => {
+    function updateStockFilter(value) {
 
-                if (sortBy === SORT_OPTIONS.QUANTITY) return b.quantity - a.quantity;
+        setStockFilter(value);
 
-                return a.name.localeCompare(b.name);
+        setPage(0);
 
-            });
+    }
 
-    }, [ingredients, searchTerm, stockFilter, sortBy]);
+    function updateSortBy(value) {
+
+        setSortBy(value);
+
+        setPage(0);
+
+    }
 
     return {
 
         searchTerm,
 
-        setSearchTerm,
+        setSearchTerm: updateSearchTerm,
 
         stockFilter,
 
-        setStockFilter,
+        setStockFilter: updateStockFilter,
 
         sortBy,
 
-        setSortBy,
+        setSortBy: updateSortBy,
 
-        filteredIngredients
+        page,
+
+        setPage,
+
+        pageSize: DEFAULT_PAGE_SIZE
 
     };
 

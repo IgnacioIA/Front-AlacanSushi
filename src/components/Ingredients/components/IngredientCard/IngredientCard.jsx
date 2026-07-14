@@ -18,7 +18,7 @@ export default function IngredientCard({
 
     onEdit,
 
-    onDelete
+    onDeactivate
 
 }) {
 
@@ -26,7 +26,7 @@ export default function IngredientCard({
 
         { id: "edit", label: "Editar", onClick: () => onEdit(ingredient) },
 
-        { id: "delete", label: "Eliminar", variant: "danger", onClick: () => onDelete(ingredient) }
+        { id: "deactivate", label: "Desactivar", variant: "danger", onClick: () => onDeactivate(ingredient) }
 
     ];
 

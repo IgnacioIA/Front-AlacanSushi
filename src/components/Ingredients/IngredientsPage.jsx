@@ -1,5 +1,7 @@
 // src/components/Ingredients/IngredientsPage.jsx
 
+import { useState } from "react";
+
 import IngredientsHeader from "./components/IngredientsHeader/IngredientsHeader";
 import IngredientsToolbar from "./components/IngredientsToolbar/IngredientsToolbar";
 import IngredientGrid from "./components/IngredientGrid/IngredientGrid";
@@ -19,22 +21,6 @@ export default function IngredientsPage() {
 
     const {
 
-        loading,
-
-        ingredients,
-
-        stats,
-
-        createIngredient,
-
-        updateIngredient,
-
-        deleteIngredient
-
-    } = useIngredients();
-
-    const {
-
         searchTerm,
 
         setSearchTerm,
@@ -47,9 +33,31 @@ export default function IngredientsPage() {
 
         setSortBy,
 
-        filteredIngredients
+        page,
 
-    } = useIngredientFilters(ingredients);
+        setPage,
+
+        pageSize
+
+    } = useIngredientFilters();
+
+    const {
+
+        loading,
+
+        ingredients,
+
+        stats,
+
+        totalPages,
+
+        createIngredient,
+
+        updateIngredient,
+
+        deactivateIngredient
+
+    } = useIngredients({ searchTerm, stockFilter, sortBy, page, pageSize });
 
     const {
 
@@ -71,13 +79,17 @@ export default function IngredientsPage() {
 
         closeDetails,
 
-        deletingIngredient,
+        deactivatingIngredient,
 
-        openDeleteConfirm,
+        openDeactivateConfirm,
 
-        closeDeleteConfirm
+        closeDeactivateConfirm
 
     } = useIngredientsPanel();
+
+    const [formError, setFormError] = useState(null);
+
+    const [deactivationNotice, setDeactivationNotice] = useState(null);
 
     if (loading) {
 
@@ -93,27 +105,70 @@ export default function IngredientsPage() {
 
     }
 
-    async function handleSubmit(data) {
+    function handleOpenCreateForm() {
 
-        if (editingIngredient) {
+        setFormError(null);
 
-            await updateIngredient(editingIngredient.id, data);
-
-        } else {
-
-            await createIngredient(data);
-
-        }
-
-        closeForm();
+        openCreateForm();
 
     }
 
-    async function handleConfirmDelete() {
+    function handleOpenEditForm(ingredient) {
 
-        await deleteIngredient(deletingIngredient.id);
+        setFormError(null);
 
-        closeDeleteConfirm();
+        openEditForm(ingredient);
+
+    }
+
+    async function handleSubmit(data) {
+
+        try {
+
+            if (editingIngredient) {
+
+                await updateIngredient(editingIngredient.id, data);
+
+            } else {
+
+                await createIngredient(data);
+
+            }
+
+            setFormError(null);
+
+            closeForm();
+
+        } catch (submitError) {
+
+            // Error normalizado por apiError.js — se muestra dentro del
+            // propio IngredientForm (no acá) para que quede junto al campo
+            // que corresponda cuando el `code` lo permite.
+            setFormError(submitError);
+
+        }
+
+    }
+
+    async function handleConfirmDeactivate() {
+
+        const deactivatedName = deactivatingIngredient.name;
+
+        const result = await deactivateIngredient(deactivatingIngredient.id);
+
+        closeDeactivateConfirm();
+
+        if (result?.recetasActivasQueLoUtilizan > 0) {
+
+            setDeactivationNotice({
+
+                name: deactivatedName,
+
+                count: result.recetasActivasQueLoUtilizan
+
+            });
+
+        }
 
     }
 
@@ -123,8 +178,29 @@ export default function IngredientsPage() {
 
             <IngredientsHeader
                 stats={stats}
-                onCreateIngredient={openCreateForm}
+                onCreateIngredient={handleOpenCreateForm}
             />
+
+            {deactivationNotice && (
+
+                <div className="IngredientsPage-Notice">
+
+                    <p>
+                        "{deactivationNotice.name}" se desactivó. Se estaba usando
+                        en {deactivationNotice.count} receta{deactivationNotice.count === 1 ? "" : "s"} activa{deactivationNotice.count === 1 ? "" : "s"}.
+                    </p>
+
+                    <button
+                        type="button"
+                        onClick={() => setDeactivationNotice(null)}
+                        aria-label="Cerrar aviso"
+                    >
+                        ✕
+                    </button>
+
+                </div>
+
+            )}
 
             <IngredientsToolbar
                 searchTerm={searchTerm}
@@ -133,16 +209,38 @@ export default function IngredientsPage() {
                 onStockFilterChange={setStockFilter}
                 sortBy={sortBy}
                 onSortChange={setSortBy}
-                onCreateIngredient={openCreateForm}
+                onCreateIngredient={handleOpenCreateForm}
             />
 
             <IngredientGrid
-                ingredients={filteredIngredients}
-                onAddNew={openCreateForm}
+                ingredients={ingredients}
+                onAddNew={handleOpenCreateForm}
                 onOpenDetails={openDetails}
-                onEdit={openEditForm}
-                onDelete={openDeleteConfirm}
+                onEdit={handleOpenEditForm}
+                onDeactivate={openDeactivateConfirm}
             />
+
+            <div className="IngredientsPage-Pagination">
+
+                <button
+                    type="button"
+                    onClick={() => setPage(current => current - 1)}
+                    disabled={page === 0}
+                >
+                    ← Anterior
+                </button>
+
+                <span>Página {page + 1} de {Math.max(totalPages, 1)}</span>
+
+                <button
+                    type="button"
+                    onClick={() => setPage(current => current + 1)}
+                    disabled={page + 1 >= totalPages}
+                >
+                    Siguiente →
+                </button>
+
+            </div>
 
             <Modal
                 isOpen={isFormOpen}
@@ -153,6 +251,7 @@ export default function IngredientsPage() {
                 <IngredientForm
                     key={formSessionId}
                     initialData={editingIngredient}
+                    submitError={formError}
                     onCancel={closeForm}
                     onSubmit={handleSubmit}
                 />
@@ -170,14 +269,15 @@ export default function IngredientsPage() {
             </Modal>
 
             <ConfirmDialog
-                isOpen={!!deletingIngredient}
-                title="Eliminar ingrediente"
-                message={`¿Seguro que querés eliminar "${deletingIngredient?.name}"?`}
-                confirmLabel="Eliminar"
+                isOpen={!!deactivatingIngredient}
+                title="Desactivar ingrediente"
+                message={`¿Seguro que querés desactivar "${deactivatingIngredient?.name}"? Dejará de aparecer en el listado de ingredientes activos.`}
+                confirmLabel="Desactivar"
                 cancelLabel="Cancelar"
                 variant="danger"
-                onConfirm={handleConfirmDelete}
-                onCancel={closeDeleteConfirm}
+                irreversible={false}
+                onConfirm={handleConfirmDeactivate}
+                onCancel={closeDeactivateConfirm}
             />
 
         </section>
