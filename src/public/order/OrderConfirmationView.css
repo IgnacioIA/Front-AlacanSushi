@@ -1,0 +1,48 @@
+.OrderConfirmationView {
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    padding: 1.1rem;
+
+}
+
+.OrderConfirmationView-Items {
+
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+
+    padding: .9rem 1rem;
+
+    border-radius: 10px;
+
+    background: var(--color-bg);
+
+}
+
+.OrderConfirmationView-Item {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-size: .9rem;
+    color: var(--color-text);
+
+}
+
+.OrderConfirmationView-Total {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 .25rem;
+
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}

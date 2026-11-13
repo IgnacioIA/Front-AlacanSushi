@@ -1,0 +1,125 @@
+.ComboComponentesPicker {
+
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+
+}
+
+.ComboComponentesPicker-Header {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--color-text);
+
+}
+
+.ComboComponentesPicker-AddButton {
+
+    min-height: 32px;
+
+    padding: 0 .75rem;
+
+    border-radius: 8px;
+
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    font-size: .8rem;
+    font-weight: 600;
+
+    transition: background .2s ease;
+
+}
+
+.ComboComponentesPicker-AddButton:hover {
+
+    background: #e6e6ea;
+
+}
+
+.ComboComponentesPicker-Empty {
+
+    margin: 0;
+
+    font-size: .85rem;
+    font-weight: 400;
+    color: var(--color-muted);
+
+}
+
+.ComboComponentesPicker-Row {
+
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+
+}
+
+.ComboComponentesPicker-Row select {
+
+    flex: 1;
+    min-width: 0;
+
+    min-height: 40px;
+
+    padding: 0 .6rem;
+
+    border-radius: 8px;
+    border: 1px solid #e0e0e5;
+
+    font-size: .9rem;
+    font-weight: 400;
+    color: var(--color-text);
+
+}
+
+.ComboComponentesPicker-Row input {
+
+    width: 70px;
+
+    min-height: 40px;
+
+    padding: 0 .5rem;
+
+    border-radius: 8px;
+    border: 1px solid #e0e0e5;
+
+    font-size: .9rem;
+    font-weight: 400;
+    color: var(--color-text);
+
+}
+
+.ComboComponentesPicker-RemoveButton {
+
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    color: var(--color-muted);
+
+    transition: background .2s ease;
+
+}
+
+.ComboComponentesPicker-RemoveButton:hover {
+
+    background: #fdecea;
+    color: #c0392b;
+
+}
+
+.ComboComponentesPicker-Error {
+
+    font-size: .78rem;
+    font-weight: 500;
+    color: #e0483e;
+
+}

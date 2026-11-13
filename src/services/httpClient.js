@@ -2,25 +2,18 @@
 //
 // Instancia única de Axios para todo el proyecto — ningún service crea su
 // propia instancia ni usa fetch. baseURL sale de VITE_API_BASE_URL (ver
-// .env.example). Cualquier interceptor futuro (auth, retry) se agrega acá,
-// no en cada service. Ver docs/frontend/integration/CONVENTIONS.md.
+// .env.example; en desarrollo es el prefijo `/api` del proxy de Vite).
+// Cookies, CSRF y manejo de 401 se configuran en createHttpClient.js, no en
+// cada service. Ver docs/frontend/integration/CONVENTIONS.md.
 
-import axios from "axios";
+import { createHttpClient } from "./createHttpClient";
 
-import { normalizeApiError } from "./apiError";
-
-const httpClient = axios.create({
+const { http, csrf, setUnauthorizedHandler } = createHttpClient({
 
     baseURL: import.meta.env.VITE_API_BASE_URL
 
 });
 
-httpClient.interceptors.response.use(
+export { csrf as csrfTokens, setUnauthorizedHandler };
 
-    response => response,
-
-    error => Promise.reject(normalizeApiError(error))
-
-);
-
-export default httpClient;
+export default http;

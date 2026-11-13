@@ -1,6 +1,6 @@
 import "./SidebarCss.css"
 import { NavLink } from "react-router-dom"
-import { adminMenu } from "../config/menu"
+import { adminMenu } from "../config/Menu"
 
 function Sidebar({ isOpen, onClose }) {
   return (

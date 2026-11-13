@@ -1,0 +1,82 @@
+.ProductosComercialesHeader {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    gap: 1rem;
+
+}
+
+.ProductosComercialesHeader-Title {
+
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+
+}
+
+.ProductosComercialesHeader h1 {
+
+    margin: 0;
+
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.ProductosComercialesHeader-Stats {
+
+    display: flex;
+    gap: 1rem;
+
+}
+
+.ProductosComercialesHeader-Stat {
+
+    font-size: .9rem;
+    color: var(--color-muted);
+
+}
+
+.ProductosComercialesHeader-CreateButton {
+
+    min-height: 44px;
+
+    padding: 0 1.25rem;
+
+    border-radius: 8px;
+
+    background: var(--color-primary);
+    color: white;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    transition: background .2s ease, transform .15s ease;
+
+}
+
+.ProductosComercialesHeader-CreateButton:hover {
+
+    filter: brightness(.94);
+
+}
+
+.ProductosComercialesHeader-CreateButton:active {
+
+    transform: scale(.98);
+
+}
+
+@media (max-width: 480px) {
+
+    .ProductosComercialesHeader h1 {
+
+        font-size: 1.5rem;
+
+    }
+
+}

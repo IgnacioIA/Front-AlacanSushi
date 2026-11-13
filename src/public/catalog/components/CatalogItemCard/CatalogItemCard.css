@@ -1,0 +1,138 @@
+.CatalogItemCard {
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+
+    overflow: hidden;
+
+}
+
+.CatalogItemCard-Link {
+
+    display: flex;
+    flex-direction: column;
+
+    color: inherit;
+
+}
+
+.CatalogItemCard-Image {
+
+    position: relative;
+
+    width: 100%;
+    aspect-ratio: 4 / 3;
+
+    background: var(--color-bg);
+
+}
+
+.CatalogItemCard-Image img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+.CatalogItemCard-Badge {
+
+    position: absolute;
+    top: .5rem;
+    left: .5rem;
+
+    padding: .2rem .55rem;
+
+    border-radius: 999px;
+
+    background: rgba(0, 0, 0, .55);
+    color: white;
+
+    font-size: .7rem;
+    font-weight: 600;
+
+}
+
+.CatalogItemCard-Info {
+
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+
+    padding: .85rem .9rem 1rem;
+
+}
+
+.CatalogItemCard-Name {
+
+    margin: 0;
+
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.CatalogItemCard-Description {
+
+    margin: 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    font-size: .82rem;
+    color: var(--color-muted);
+
+}
+
+.CatalogItemCard-Price {
+
+    margin: .2rem 0 0;
+
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.CatalogItemCard-AddButton {
+
+    position: absolute;
+    right: .6rem;
+    bottom: .6rem;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background: var(--color-primary);
+    color: white;
+
+    font-size: 1.3rem;
+    line-height: 1;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+
+    transition: transform .15s ease;
+
+}
+
+.CatalogItemCard-AddButton:active {
+
+    transform: scale(.92);
+
+}

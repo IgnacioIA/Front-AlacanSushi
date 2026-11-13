@@ -1,0 +1,82 @@
+.CombosComercialesHeader {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    gap: 1rem;
+
+}
+
+.CombosComercialesHeader-Title {
+
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+
+}
+
+.CombosComercialesHeader h1 {
+
+    margin: 0;
+
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.CombosComercialesHeader-Stats {
+
+    display: flex;
+    gap: 1rem;
+
+}
+
+.CombosComercialesHeader-Stat {
+
+    font-size: .9rem;
+    color: var(--color-muted);
+
+}
+
+.CombosComercialesHeader-CreateButton {
+
+    min-height: 44px;
+
+    padding: 0 1.25rem;
+
+    border-radius: 8px;
+
+    background: var(--color-primary);
+    color: white;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+    transition: background .2s ease, transform .15s ease;
+
+}
+
+.CombosComercialesHeader-CreateButton:hover {
+
+    filter: brightness(.94);
+
+}
+
+.CombosComercialesHeader-CreateButton:active {
+
+    transform: scale(.98);
+
+}
+
+@media (max-width: 480px) {
+
+    .CombosComercialesHeader h1 {
+
+        font-size: 1.5rem;
+
+    }
+
+}

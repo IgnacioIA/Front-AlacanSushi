@@ -1,0 +1,90 @@
+.PublicLayout {
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100vh;
+
+    /* Mobile-first: ancho de teléfono como base; en desktop queda centrado
+       en una columna angosta en vez de estirarse a todo el viewport — es
+       una adaptación de la experiencia mobile, no un layout desktop propio
+       (ver prompt de esta etapa). */
+    max-width: 480px;
+    margin: 0 auto;
+
+    background: var(--color-bg);
+
+}
+
+.PublicLayout-Header {
+
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    height: var(--header-height);
+
+    padding: 0 1.1rem;
+
+    background: var(--color-surface);
+    box-shadow: var(--shadow);
+
+}
+
+.PublicLayout-Brand {
+
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text);
+
+}
+
+.PublicLayout-CartLink {
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    font-size: 1.3rem;
+
+}
+
+.PublicLayout-CartBadge {
+
+    position: absolute;
+    top: 2px;
+    right: 2px;
+
+    min-width: 18px;
+    height: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 4px;
+
+    border-radius: 999px;
+
+    background: var(--color-primary);
+    color: white;
+
+    font-size: .7rem;
+    font-weight: 700;
+
+}
+
+.PublicLayout-Content {
+
+    flex: 1;
+
+}

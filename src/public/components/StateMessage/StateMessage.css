@@ -1,0 +1,32 @@
+.StateMessage {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: .5rem;
+
+    padding: 2.5rem 1.25rem;
+
+    text-align: center;
+
+}
+
+.StateMessage-Title {
+
+    margin: 0;
+
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+
+}
+
+.StateMessage-Description {
+
+    margin: 0;
+
+    font-size: .9rem;
+    color: var(--color-muted);
+
+}

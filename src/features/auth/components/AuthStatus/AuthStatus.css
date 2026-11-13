@@ -1,0 +1,60 @@
+.AuthStatus {
+
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+
+    padding: 2rem 1.25rem;
+
+    text-align: center;
+
+}
+
+.AuthStatus-Title {
+
+    margin: 0;
+
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+
+}
+
+.AuthStatus-Description {
+
+    margin: 0;
+
+    max-width: 360px;
+
+    font-size: .9rem;
+    color: var(--color-muted);
+
+}
+
+.AuthStatus-Action {
+
+    min-height: 44px;
+
+    margin-top: .4rem;
+    padding: 0 1.4rem;
+
+    border-radius: 10px;
+
+    background: var(--color-primary);
+    color: white;
+
+    font-size: .95rem;
+    font-weight: 600;
+
+}
+
+.AuthStatus-Action:focus-visible {
+
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+
+}

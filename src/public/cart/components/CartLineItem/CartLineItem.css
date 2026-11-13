@@ -1,0 +1,90 @@
+.CartLineItem {
+
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+
+    padding: .85rem 0;
+
+    border-bottom: 1px solid var(--color-bg);
+
+}
+
+.CartLineItem-Image {
+
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+
+    border-radius: 8px;
+    overflow: hidden;
+
+    background: var(--color-bg);
+
+}
+
+.CartLineItem-Image img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+.CartLineItem-Info {
+
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+
+}
+
+.CartLineItem-Name {
+
+    margin: 0;
+
+    font-size: .92rem;
+    font-weight: 600;
+    color: var(--color-text);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+}
+
+.CartLineItem-Price {
+
+    margin: 0;
+
+    font-size: .85rem;
+    color: var(--color-muted);
+
+}
+
+.CartLineItem-Remove {
+
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    color: var(--color-muted);
+
+}
+
+.CartLineItem-Remove:hover {
+
+    background: #fdecea;
+    color: #c0392b;
+
+}

@@ -1,0 +1,58 @@
+/* Objetivo táctil mínimo de 44px (mismo criterio que ya usa el panel admin) */
+.PublicButton {
+
+    min-height: 48px;
+
+    width: 100%;
+
+    padding: 0 1.25rem;
+
+    border-radius: 10px;
+
+    font-size: 1rem;
+    font-weight: 600;
+
+    transition: filter .15s ease, transform .1s ease;
+
+}
+
+.PublicButton:active {
+
+    transform: scale(.98);
+
+}
+
+.PublicButton:disabled {
+
+    opacity: .5;
+    pointer-events: none;
+
+}
+
+.PublicButton-primary {
+
+    background: var(--color-primary);
+    color: white;
+
+}
+
+.PublicButton-primary:hover {
+
+    filter: brightness(.94);
+
+}
+
+.PublicButton-secondary {
+
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow);
+
+}
+
+.PublicButton-danger {
+
+    background: #fdecea;
+    color: #c0392b;
+
+}

@@ -1,0 +1,59 @@
+.CartView {
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100%;
+
+}
+
+.CartView-Lines {
+
+    flex: 1;
+
+    padding: 0 1.1rem;
+
+}
+
+.CartView-Footer {
+
+    position: sticky;
+    bottom: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 1rem 1.1rem;
+
+    background: var(--color-surface);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, .08);
+
+}
+
+.CartView-Total {
+
+    display: flex;
+    flex-direction: column;
+
+    font-size: .85rem;
+    color: var(--color-muted);
+
+}
+
+.CartView-Total strong {
+
+    font-size: 1.2rem;
+    color: var(--color-text);
+
+}
+
+.CartView-Footer .PublicButton {
+
+    width: auto;
+    flex-shrink: 0;
+
+    padding: 0 1.75rem;
+
+}

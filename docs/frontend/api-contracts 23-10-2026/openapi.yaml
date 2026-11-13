@@ -1,0 +1,880 @@
+openapi: 3.0.3
+info:
+  title: Alacan — API del MVP
+  version: "1.0"
+  description: |
+    Especificación de los endpoints del MVP comercial, derivada del código de la rama
+    `feature/mvp` (Slices 0 a 4) el 2026-10-09. Es una vista de apoyo: ante una diferencia,
+    valen el código y los documentos Markdown de esta carpeta.
+
+    **Cobertura.** Incluye los 26 endpoints del MVP (autenticación, catálogo público,
+    catálogo comercial y pedidos sin edición de líneas). No incluye los 4 endpoints de
+    edición de líneas de pedido ni los 17 de inventario; ver `pedidos.md` y
+    `recursos-auxiliares.md`.
+
+    **Lo que OpenAPI no representa bien y hay que leer en Markdown:**
+
+    - El token CSRF cambia después de cada login y logout, y está ligado a la cookie de
+      sesión (`autenticacion.md`).
+    - `POST /auth/login` y `POST /auth/logout` los atienden filtros de Spring Security,
+      no controladores.
+    - Sin sesión, una escritura sin token CSRF responde 401 (no 403) fuera de `/auth`
+      (`errores-y-seguridad.md`).
+    - Cualquier ruta no listada como pública responde 401 a un anónimo, exista o no.
+    - Los errores que ningún manejador intercepta no tienen `code` ni la forma `Problema`.
+    - `id` y `cantidad` de las líneas de un pedido deben ser enteros JSON estrictos:
+      `2.0` y `"2"` se rechazan.
+
+    **Validación.** Comportamiento cubierto por tests automáticos sobre H2. La persistencia
+    se validó parcialmente contra MySQL 8.0 (2026-10-21, `EsquemaSobreMysqlRealTest`, solo
+    los flujos que cubre); esta especificación, en su conjunto, no fue validada contra MySQL
+    ni con un navegador (`estado-de-api.md`).
+servers:
+  - url: http://localhost:8080
+    description: Desarrollo local. El puerto no está fijado en el repositorio; es el predeterminado del servidor.
+tags:
+  - name: Autenticación
+  - name: Catálogo público
+  - name: Productos comerciales
+  - name: Combos comerciales
+  - name: Pedidos
+
+paths:
+  /auth/csrf:
+    get:
+      tags: [Autenticación]
+      operationId: obtenerTokenCsrf
+      summary: AUTH-01 — Obtener el token CSRF
+      security: []
+      responses:
+        "200":
+          description: Token vigente para la sesión de las cookies enviadas.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenCsrf" }
+
+  /auth/login:
+    post:
+      tags: [Autenticación]
+      operationId: iniciarSesion
+      summary: AUTH-02 — Iniciar sesión
+      description: Cuerpo como formulario, no JSON. Tras un login exitoso hay que pedir un token CSRF nuevo.
+      security:
+        - csrf: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string, format: password }
+      responses:
+        "200":
+          description: Sesión iniciada. Devuelve una cookie de sesión nueva.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Sesion" }
+        "401":
+          description: "`CREDENCIALES_INVALIDAS`"
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+        "403":
+          description: "`CSRF_INVALIDO`"
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+
+  /auth/session:
+    get:
+      tags: [Autenticación]
+      operationId: consultarSesion
+      summary: AUTH-03 — Consultar la sesión actual
+      security: []
+      responses:
+        "200":
+          description: Siempre 200, haya o no sesión.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Sesion" }
+
+  /auth/logout:
+    post:
+      tags: [Autenticación]
+      operationId: cerrarSesion
+      summary: AUTH-04 — Cerrar sesión
+      security:
+        - csrf: []
+      responses:
+        "204":
+          description: Sesión cerrada, o no había sesión. Sin cuerpo.
+        "403":
+          description: "`CSRF_INVALIDO`. La sesión no se cierra."
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+
+  /catalogo:
+    get:
+      tags: [Catálogo público]
+      operationId: consultarCatalogo
+      summary: CAT-01 — Consultar el catálogo
+      description: Productos activos por nombre, luego combos activos por nombre. Sin paginación ni filtros.
+      security: []
+      responses:
+        "200":
+          description: Arreglo plano. Vacío si no hay nada publicado.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/ElementoCatalogo" }
+
+  /admin/comercial/productos:
+    get:
+      tags: [Productos comerciales]
+      operationId: listarProductosComerciales
+      summary: COM-P-01 — Listar productos comerciales
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/sizeSinMaximo"
+        - $ref: "#/components/parameters/search"
+        - $ref: "#/components/parameters/estadoActivo"
+      responses:
+        "200":
+          description: Página ordenada por nombre ascendente.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginaProductoComercial" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+    post:
+      tags: [Productos comerciales]
+      operationId: crearProductoComercial
+      summary: COM-P-03 — Crear un producto comercial
+      security:
+        - sesion: []
+          csrf: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProductoComercialEntrada" }
+      responses:
+        "201":
+          description: Creado, activo.
+          headers:
+            Location:
+              schema: { type: string }
+              description: "`/admin/comercial/productos/{id}`"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductoComercial" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+
+  /admin/comercial/productos/{id}:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    get:
+      tags: [Productos comerciales]
+      operationId: obtenerProductoComercial
+      summary: COM-P-02 — Obtener un producto comercial
+      responses:
+        "200":
+          description: Producto, activo o inactivo.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductoComercial" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+    put:
+      tags: [Productos comerciales]
+      operationId: modificarProductoComercial
+      summary: COM-P-04 — Modificar un producto comercial
+      description: Reemplazo completo. Un campo opcional omitido borra el valor guardado.
+      security:
+        - sesion: []
+          csrf: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProductoComercialEntrada" }
+      responses:
+        "200":
+          description: Actualizado. `activo` no cambia.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductoComercial" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /admin/comercial/productos/{id}/activar:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Productos comerciales]
+      operationId: activarProductoComercial
+      summary: COM-P-05 — Activar un producto comercial
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200":
+          description: "Producto con `activo: true`. Idempotente."
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductoComercial" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /admin/comercial/productos/{id}/desactivar:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Productos comerciales]
+      operationId: desactivarProductoComercial
+      summary: COM-P-06 — Desactivar un producto comercial
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200":
+          description: "Producto con `activo: false`. Idempotente."
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductoComercial" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+        "409":
+          description: "`PRODUCTO_COMERCIAL_EN_USO_POR_COMBO_ACTIVO`"
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+
+  /admin/comercial/combos:
+    get:
+      tags: [Combos comerciales]
+      operationId: listarCombosComerciales
+      summary: COM-C-01 — Listar combos comerciales
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/sizeSinMaximo"
+        - $ref: "#/components/parameters/search"
+        - $ref: "#/components/parameters/estadoActivo"
+      responses:
+        "200":
+          description: Página ordenada por nombre ascendente.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginaComboComercial" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+    post:
+      tags: [Combos comerciales]
+      operationId: crearComboComercial
+      summary: COM-C-03 — Crear un combo comercial
+      security:
+        - sesion: []
+          csrf: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComboComercialEntrada" }
+      responses:
+        "201":
+          description: Creado, activo.
+          headers:
+            Location:
+              schema: { type: string }
+              description: "`/admin/comercial/combos/{id}`"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ComboComercial" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404":
+          description: "`PRODUCTO_COMERCIAL_NOT_FOUND` — un componente no existe."
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+        "409":
+          description: "`PRODUCTO_COMERCIAL_INACTIVO` — un componente está inactivo."
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+
+  /admin/comercial/combos/{id}:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    get:
+      tags: [Combos comerciales]
+      operationId: obtenerComboComercial
+      summary: COM-C-02 — Obtener un combo comercial
+      responses:
+        "200":
+          description: Combo con sus componentes.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ComboComercial" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+    put:
+      tags: [Combos comerciales]
+      operationId: modificarComboComercial
+      summary: COM-C-04 — Modificar un combo comercial
+      description: Reemplazo completo, incluida la lista de componentes.
+      security:
+        - sesion: []
+          csrf: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComboComercialEntrada" }
+      responses:
+        "200":
+          description: Actualizado. `activo` no cambia.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ComboComercial" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404":
+          description: "`COMBO_COMERCIAL_NOT_FOUND` o `PRODUCTO_COMERCIAL_NOT_FOUND`"
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+        "409":
+          description: "`PRODUCTO_COMERCIAL_INACTIVO`"
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+
+  /admin/comercial/combos/{id}/activar:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Combos comerciales]
+      operationId: activarComboComercial
+      summary: COM-C-05 — Activar un combo comercial
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200":
+          description: "Combo con `activo: true`. Idempotente."
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ComboComercial" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+        "409":
+          description: "`COMBO_COMERCIAL_COMPONENTE_INACTIVO`"
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+
+  /admin/comercial/combos/{id}/desactivar:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Combos comerciales]
+      operationId: desactivarComboComercial
+      summary: COM-C-06 — Desactivar un combo comercial
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200":
+          description: "Combo con `activo: false`. Idempotente."
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ComboComercial" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /pedidos:
+    post:
+      tags: [Pedidos]
+      operationId: crearPedido
+      summary: PED-01 — Crear pedido (público)
+      description: Público y exento de CSRF. Atómico. El servidor fija precios, total, estado y canal.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PedidoEntrada" }
+      responses:
+        "201":
+          description: Pedido creado en estado `NUEVO`, canal `WEB`.
+          headers:
+            Location:
+              schema: { type: string }
+              description: "`/pedidos/{id}` (ruta administrativa)"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Pedido" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "404":
+          description: "`PRODUCTO_COMERCIAL_NOT_FOUND` o `COMBO_COMERCIAL_NOT_FOUND`"
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+        "409":
+          description: "`PRODUCTO_COMERCIAL_INACTIVO` o `COMBO_COMERCIAL_INACTIVO`"
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problema" }
+    get:
+      tags: [Pedidos]
+      operationId: listarPedidos
+      summary: PED-02 — Listar pedidos
+      description: Orden fijo por `fechaCreacion` ascendente y luego `id` ascendente.
+      parameters:
+        - name: estado
+          in: query
+          description: Repetible (`estado=A&estado=B`), combinado con OR. No admite lista separada por comas ni valor vacío.
+          style: form
+          explode: true
+          schema:
+            type: array
+            items: { $ref: "#/components/schemas/EstadoPedido" }
+        - $ref: "#/components/parameters/page"
+        - name: size
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 15 }
+      responses:
+        "200":
+          description: Página de pedidos completos, con sus líneas.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginaPedido" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+
+  /pedidos/{id}:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    get:
+      tags: [Pedidos]
+      operationId: consultarPedido
+      summary: PED-03 — Consultar un pedido
+      responses:
+        "200":
+          description: Pedido.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Pedido" }
+        "400": { $ref: "#/components/responses/Validacion" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /pedidos/{id}/confirmar:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Pedidos]
+      operationId: confirmarPedido
+      summary: PED-04 — Confirmar (NUEVO → CONFIRMADO)
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200": { $ref: "#/components/responses/SinCuerpo" }
+        "400": { $ref: "#/components/responses/TransicionInvalida" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /pedidos/{id}/en-preparacion:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Pedidos]
+      operationId: pasarPedidoAEnPreparacion
+      summary: PED-05 — Pasar a preparación (CONFIRMADO → EN_PREPARACION)
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200": { $ref: "#/components/responses/SinCuerpo" }
+        "400": { $ref: "#/components/responses/TransicionInvalida" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /pedidos/{id}/listo:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Pedidos]
+      operationId: marcarPedidoListo
+      summary: PED-06 — Marcar listo (EN_PREPARACION → LISTO)
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200": { $ref: "#/components/responses/SinCuerpo" }
+        "400": { $ref: "#/components/responses/TransicionInvalida" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /pedidos/{id}/entregado:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Pedidos]
+      operationId: marcarPedidoEntregado
+      summary: PED-07 — Marcar entregado (LISTO → ENTREGADO)
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200": { $ref: "#/components/responses/SinCuerpo" }
+        "400": { $ref: "#/components/responses/TransicionInvalida" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /pedidos/{id}/cancelar:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Pedidos]
+      operationId: cancelarPedido
+      summary: PED-08 — Cancelar (cualquier estado menos ENTREGADO → CANCELADO)
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200": { $ref: "#/components/responses/SinCuerpo" }
+        "400": { $ref: "#/components/responses/TransicionInvalida" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+  /pedidos/{id}/rechazar:
+    parameters:
+      - $ref: "#/components/parameters/id"
+    post:
+      tags: [Pedidos]
+      operationId: rechazarPedido
+      summary: PED-09 — Rechazar (misma transición que cancelar)
+      security:
+        - sesion: []
+          csrf: []
+      responses:
+        "200": { $ref: "#/components/responses/SinCuerpo" }
+        "400": { $ref: "#/components/responses/TransicionInvalida" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Csrf" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+
+security:
+  - sesion: []
+
+components:
+  securitySchemes:
+    sesion:
+      type: apiKey
+      in: cookie
+      name: ALACAN_SESSION
+      description: Cookie de sesión HttpOnly del administrador. La establece `POST /auth/login`.
+    csrf:
+      type: apiKey
+      in: header
+      name: X-CSRF-TOKEN
+      description: Token de `GET /auth/csrf`, ligado a la sesión. Cambia tras login y logout.
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64 }
+    page:
+      name: page
+      in: query
+      description: Base cero.
+      schema: { type: integer, minimum: 0, default: 0 }
+    sizeSinMaximo:
+      name: size
+      in: query
+      description: Sin máximo.
+      schema: { type: integer, minimum: 1, default: 15 }
+    search:
+      name: search
+      in: query
+      description: Busca dentro de `nombre`, sin distinguir mayúsculas.
+      schema: { type: string }
+    estadoActivo:
+      name: estado
+      in: query
+      description: No distingue mayúsculas. Omitido = todos.
+      schema: { type: string, enum: [ACTIVO, INACTIVO] }
+
+  responses:
+    SinCuerpo:
+      description: Aceptado. **Sin cuerpo**; consultar el pedido para ver el estado nuevo.
+    Validacion:
+      description: "`VALIDATION_ERROR`"
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problema" }
+    TransicionInvalida:
+      description: "`VALIDATION_ERROR` — el pedido no está en el estado de origen requerido, o el id no es numérico."
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problema" }
+    NoAutenticado:
+      description: "`NO_AUTENTICADO`"
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problema" }
+    Csrf:
+      description: "`CSRF_INVALIDO` (con sesión). Sin sesión, la respuesta es 401."
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problema" }
+    NoEncontrado:
+      description: "`PEDIDO_NOT_FOUND`, `PRODUCTO_COMERCIAL_NOT_FOUND` o `COMBO_COMERCIAL_NOT_FOUND`, según el recurso."
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problema" }
+
+  schemas:
+    Problema:
+      type: object
+      required: [title, status, detail, instance, code]
+      properties:
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string, description: Texto para personas. Puede cambiar. }
+        instance: { type: string, description: Ruta de la petición. }
+        code:
+          type: string
+          description: Identificador estable. Catálogo completo en `errores-y-seguridad.md`.
+          example: VALIDATION_ERROR
+
+    TokenCsrf:
+      type: object
+      required: [headerName, token]
+      properties:
+        headerName: { type: string, example: X-CSRF-TOKEN }
+        token: { type: string }
+
+    Sesion:
+      type: object
+      required: [autenticado, username, rol]
+      properties:
+        autenticado: { type: boolean }
+        username: { type: string, nullable: true }
+        rol: { type: string, nullable: true, enum: [ADMIN, null] }
+
+    TipoElemento:
+      type: string
+      enum: [PRODUCTO, COMBO]
+
+    EstadoPedido:
+      type: string
+      description: Ningún endpoint lleva un pedido a `ENVIADO`.
+      enum: [NUEVO, CONFIRMADO, EN_PREPARACION, LISTO, ENVIADO, ENTREGADO, CANCELADO]
+
+    ElementoCatalogo:
+      type: object
+      required: [id, tipo, nombre, descripcion, precio, imagen, componentes]
+      description: La identidad es `tipo` + `id`.
+      properties:
+        id: { type: integer, format: int64 }
+        tipo: { $ref: "#/components/schemas/TipoElemento" }
+        nombre: { type: string }
+        descripcion: { type: string, nullable: true }
+        precio: { type: number }
+        imagen: { type: string, nullable: true }
+        componentes:
+          type: array
+          nullable: true
+          description: "`null` en un PRODUCTO."
+          items:
+            type: object
+            required: [productoId, nombre, cantidad]
+            properties:
+              productoId: { type: integer, format: int64 }
+              nombre: { type: string }
+              cantidad: { type: integer }
+
+    ProductoComercialEntrada:
+      type: object
+      required: [nombre, precio]
+      properties:
+        nombre: { type: string, minLength: 1 }
+        descripcion: { type: string, nullable: true }
+        precio: { type: number, exclusiveMinimum: true, minimum: 0 }
+        imagen: { type: string, nullable: true }
+
+    ProductoComercial:
+      type: object
+      required: [id, nombre, descripcion, precio, imagen, activo]
+      properties:
+        id: { type: integer, format: int64 }
+        nombre: { type: string }
+        descripcion: { type: string, nullable: true }
+        precio: { type: number }
+        imagen: { type: string, nullable: true }
+        activo: { type: boolean }
+
+    ComboComercialEntrada:
+      type: object
+      required: [nombre, precio, componentes]
+      properties:
+        nombre: { type: string, minLength: 1 }
+        descripcion: { type: string, nullable: true }
+        precio: { type: number, exclusiveMinimum: true, minimum: 0 }
+        imagen: { type: string, nullable: true }
+        componentes:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [productoComercialId, cantidad]
+            properties:
+              productoComercialId: { type: integer, format: int64 }
+              cantidad: { type: integer, minimum: 1 }
+
+    ComboComercial:
+      type: object
+      required: [id, nombre, descripcion, precio, imagen, activo, componentes]
+      properties:
+        id: { type: integer, format: int64 }
+        nombre: { type: string }
+        descripcion: { type: string, nullable: true }
+        precio: { type: number }
+        imagen: { type: string, nullable: true }
+        activo: { type: boolean }
+        componentes:
+          type: array
+          items:
+            type: object
+            required: [productoComercialId, nombre, cantidad]
+            properties:
+              productoComercialId: { type: integer, format: int64 }
+              nombre: { type: string }
+              cantidad: { type: integer }
+
+    PedidoEntrada:
+      type: object
+      required: [tipoPedido, nombreCliente, telefonoCliente, items]
+      properties:
+        tipoPedido: { type: string, enum: [DELIVERY, TAKEAWAY] }
+        nombreCliente: { type: string, minLength: 1, maxLength: 80 }
+        telefonoCliente: { type: string, minLength: 1, maxLength: 30 }
+        direccion:
+          type: string
+          nullable: true
+          maxLength: 200
+          description: Obligatoria si `tipoPedido` es `DELIVERY`.
+        items:
+          type: array
+          minItems: 1
+          maxItems: 20
+          description: Sin repetir `tipo` + `id`.
+          items:
+            type: object
+            required: [tipo, id, cantidad]
+            properties:
+              tipo: { $ref: "#/components/schemas/TipoElemento" }
+              id: { type: integer, format: int64, description: Id del producto o combo del catálogo. Entero JSON estricto. }
+              cantidad: { type: integer, minimum: 1, maximum: 50 }
+              observacion: { type: string, nullable: true, maxLength: 200 }
+
+    LineaPedido:
+      type: object
+      required: [id, tipo, referenciaId, nombre, precioUnitario, cantidad, subtotal, observacion]
+      properties:
+        id: { type: integer, format: int64, description: Id de la línea. }
+        tipo: { $ref: "#/components/schemas/TipoElemento" }
+        referenciaId: { type: integer, format: int64, description: Id del producto o combo de origen. }
+        nombre: { type: string, description: Copia al crear la línea. }
+        precioUnitario: { type: number, description: Copia al crear la línea. }
+        cantidad: { type: integer }
+        subtotal: { type: number }
+        observacion: { type: string, nullable: true }
+
+    Pedido:
+      type: object
+      required: [id, estado, tipoPedido, canal, nombreCliente, telefonoCliente, direccion, fechaCreacion, total, items]
+      properties:
+        id: { type: integer, format: int64 }
+        estado: { $ref: "#/components/schemas/EstadoPedido" }
+        tipoPedido: { type: string, enum: [DELIVERY, TAKEAWAY, SALON] }
+        canal: { type: string, enum: [WEB, TOTEM, APP_MOVIL, MOZO] }
+        nombreCliente: { type: string }
+        telefonoCliente: { type: string }
+        direccion: { type: string, nullable: true }
+        fechaCreacion:
+          type: string
+          description: ISO 8601 sin zona horaria, con fracción de segundo variable. No es `date-time` de RFC 3339.
+          example: "2026-10-09T20:15:31.482913"
+        total: { type: number }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/LineaPedido" }
+
+    Pagina:
+      type: object
+      required: [page, size, totalElements, totalPages, first, last, empty]
+      properties:
+        page: { type: integer }
+        size: { type: integer }
+        totalElements: { type: integer, format: int64 }
+        totalPages: { type: integer }
+        first: { type: boolean }
+        last: { type: boolean }
+        empty: { type: boolean }
+
+    PaginaProductoComercial:
+      allOf:
+        - $ref: "#/components/schemas/Pagina"
+        - type: object
+          required: [content]
+          properties:
+            content:
+              type: array
+              items: { $ref: "#/components/schemas/ProductoComercial" }
+
+    PaginaComboComercial:
+      allOf:
+        - $ref: "#/components/schemas/Pagina"
+        - type: object
+          required: [content]
+          properties:
+            content:
+              type: array
+              items: { $ref: "#/components/schemas/ComboComercial" }
+
+    PaginaPedido:
+      allOf:
+        - $ref: "#/components/schemas/Pagina"
+        - type: object
+          required: [content]
+          properties:
+            content:
+              type: array
+              items: { $ref: "#/components/schemas/Pedido" }

@@ -24,8 +24,70 @@
   font-size: 16px;
 }
 
-.user img {
+.user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.user-name {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.logout-btn {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.logout-btn:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+.logout-btn:focus-visible,
+.header-alert-close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Aviso de logout fallido: debajo del header y por encima del sidebar */
+.header-alert {
+  position: sticky;
+  top: 60px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #fdecea;
+  color: #c0392b;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.header-alert-close {
+  flex-shrink: 0;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 8px;
+  color: #c0392b;
+}
+
+@media (max-width: 480px) {
+  .user-name {
+    display: none;
+  }
 }

@@ -1,0 +1,36 @@
+/* Mobile-first: 2 columnas por defecto (pensado para pantallas angostas),
+   más columnas a medida que crece el viewport — desktop es una adaptación,
+   no el punto de partida (ver prompt de esta etapa, sección "Mobile-first"). */
+.CatalogView {
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: .9rem;
+
+    padding: .9rem;
+
+}
+
+@media (min-width: 640px) {
+
+    .CatalogView {
+
+        grid-template-columns: repeat(3, 1fr);
+
+    }
+
+}
+
+@media (min-width: 960px) {
+
+    .CatalogView {
+
+        grid-template-columns: repeat(4, 1fr);
+
+        gap: 1.25rem;
+        padding: 1.25rem;
+
+    }
+
+}
